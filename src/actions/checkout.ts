@@ -22,37 +22,54 @@ export async function buyProject(formData: FormData) {
     throw new Error("Projeto não encontrado")
   }
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  const priceInCents = Math.round(Number(project.price) * 100)
+
+  if (priceInCents > 99999999) {
+    throw new Error("O valor deste projeto excede o limite permitido pelo processador de pagamentos.")
+  }
+
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error("Configuração do Stripe ausente.")
+  }
+
+  const baseUrl = process.env.NEXTAUTH_URL || "https://free-lavault.vercel.app"
+
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: "2025-12-15.clover",
     typescript: true,
   })
 
-  const checkoutSession = await stripe.checkout.sessions.create({
-    mode: "payment",
-    customer_email: session.user.email!,
-    payment_method_types: ["card"],
-    line_items: [
-      {
-        price_data: {
-          currency: "brl",
-          product_data: {
-            name: project.name,
-            description: project.description,
+  try {
+    const checkoutSession = await stripe.checkout.sessions.create({
+      mode: "payment",
+      customer_email: session.user.email!,
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "brl",
+            product_data: {
+              name: project.name,
+              description: project.description,
+            },
+            unit_amount: priceInCents,
           },
-          unit_amount: Math.round(Number(project.price) * 100),
+          quantity: 1,
         },
-        quantity: 1,
+      ],
+      metadata: {
+        projectId: project.id,
+        userId: session.user.id,
       },
-    ],
-    metadata: {
-      projectId: project.id,
-      userId: session.user.id,
-    },
-    success_url: `${process.env.NEXTAUTH_URL}/?success=true`,
-    cancel_url: `${process.env.NEXTAUTH_URL}/`,
-  })
+      success_url: `${baseUrl}/?success=true`,
+      cancel_url: `${baseUrl}/`,
+    })
 
-  if (checkoutSession.url) {
-    redirect(checkoutSession.url)
+    if (checkoutSession.url) {
+      redirect(checkoutSession.url)
+    }
+  } catch (error: any) {
+    console.error("Erro Stripe:", error.message)
+    throw new Error(error.message)
   }
 }
