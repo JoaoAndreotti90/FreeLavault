@@ -17,9 +17,7 @@ export default async function Home({ searchParams }: { searchParams: { query?: s
   const projects = await db.project.findMany({
     where: {
       name: { contains: query, mode: "insensitive" },
-      freelancer: {
-        isNot: null
-      }
+      freelancerId: { not: "" }
     },
     orderBy: { createdAt: "desc" },
     include: { freelancer: true },
@@ -99,7 +97,7 @@ export default async function Home({ searchParams }: { searchParams: { query?: s
                   </Link>
                   
                   <div className="mt-4 flex items-center gap-2 text-xs font-medium text-gray-400">
-                    <span>Por {isOwner ? "Você" : (project.freelancer.name?.split(" ")[0] || "Vendedor")}</span>
+                    <span>Por {isOwner ? "Você" : (project.freelancer?.name?.split(" ")[0] || "Vendedor")}</span>
                   </div>
                   
                   <div className="mt-6 flex items-center justify-between pt-4 border-t border-gray-50">
