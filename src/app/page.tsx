@@ -112,7 +112,7 @@ export default async function Home({
                   </div>
                   
                   <div className="mt-4 flex items-center gap-2 text-xs font-medium text-gray-400">
-                    <span>Vendedor: {project.freelancer.name}</span>
+                    <span>Por {project.freelancer.name}</span>
                   </div>
                   
                   <div className="mt-6 flex items-center justify-between pt-4 border-t border-gray-50">
