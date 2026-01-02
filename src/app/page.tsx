@@ -1,4 +1,4 @@
-import { db } from "@/lib/db"
+=import { db } from "@/lib/db"
 import Navbar from "@/components/Navbar"
 import Link from "next/link"
 import { buyProject } from "@/actions/checkout"
@@ -17,11 +17,15 @@ export default async function Home({ searchParams }: { searchParams: { query?: s
   const projects = await db.project.findMany({
     where: {
       name: { contains: query, mode: "insensitive" },
-      freelancerId: { not: "" }
+      freelancer: {
+        isNot: undefined 
+      }
     },
     orderBy: { createdAt: "desc" },
     include: { freelancer: true },
   })
+
+  const activeProjects = projects.filter(p => p.freelancer !== null)
 
   return (
     <main className="min-h-screen bg-gray-50/50">
@@ -53,7 +57,7 @@ export default async function Home({ searchParams }: { searchParams: { query?: s
         </div>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {projects.map((project) => {
+          {activeProjects.map((project) => {
             const isOwner = userId === project.freelancerId
 
             return (
@@ -87,17 +91,17 @@ export default async function Home({ searchParams }: { searchParams: { query?: s
                 </Link>
 
                 <div className="flex flex-col justify-between flex-1 p-6">
-                  <Link href={`/project/${project.id}`} className="block group-hover:opacity-80 transition-opacity">
-                    <h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
+                  <div className="block">
+                    <h3 className="text-lg font-bold text-gray-900 line-clamp-1">
                       {project.name}
                     </h3>
                     <p className="mt-2 text-sm text-gray-500 line-clamp-2 leading-relaxed h-10">
                       {project.description}
                     </p>
-                  </Link>
+                  </div>
                   
                   <div className="mt-4 flex items-center gap-2 text-xs font-medium text-gray-400">
-                    <span>Por {isOwner ? "Você" : (project.freelancer?.name?.split(" ")[0] || "Vendedor")}</span>
+                    <span>Por {project.freelancer?.name || "Vendedor"}</span>
                   </div>
                   
                   <div className="mt-6 flex items-center justify-between pt-4 border-t border-gray-50">
@@ -128,21 +132,13 @@ export default async function Home({ searchParams }: { searchParams: { query?: s
               </div>
             )
           })}
-          
-           {projects.length === 0 && (
-            <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
-              <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                <svg className="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900">Nenhum projeto encontrado</h3>
-              <p className="text-gray-500 mt-1 max-w-sm">
-                Tente buscar por outros termos ou {query && <Link href="/" className="text-blue-600 hover:underline">limpe a pesquisa</Link>}
-              </p>
-            </div>
-          )}
         </div>
+
+        {activeProjects.length === 0 && (
+          <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
+            <h3 className="text-lg font-medium text-gray-900">Nenhum projeto disponível</h3>
+          </div>
+        )}
       </div>
     </main>
   )
