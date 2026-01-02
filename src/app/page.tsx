@@ -7,9 +7,7 @@ import { authOptions } from "@/lib/auth"
 import SearchBar from "@/components/SearchBar"
 import Image from "next/image"
 
-// ISSO AQUI OBRIGA A PÁGINA A ATUALIZAR SEMPRE (MATA O CACHE)
 export const dynamic = "force-dynamic"
-export const revalidate = 0 
 
 export default async function Home({ 
   searchParams 
@@ -33,11 +31,7 @@ export default async function Home({
     include: { freelancer: true },
   })
 
-  // FILTRO REFORÇADO:
-  // Só aceita se tiver o objeto freelancer E se o freelancerId não for nulo
-  const activeProjects = projects.filter((project) => {
-    return project.freelancer && project.freelancerId !== null
-  })
+  const activeProjects = projects.filter(project => project.freelancer !== null)
 
   return (
     <main className="min-h-screen bg-gray-50/50">
@@ -66,7 +60,6 @@ export default async function Home({
         </div>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {/* IMPORTANTE: Aqui usamos o activeProjects */}
           {activeProjects.map((project) => {
             const isOwner = userId === project.freelancerId
 
@@ -102,7 +95,6 @@ export default async function Home({
                   </div>
                   
                   <div className="mt-4 flex items-center gap-2 text-xs font-medium text-gray-400">
-                    {/* Se passar pelo filtro, o freelancer.name existe com certeza */}
                     <span>Por {project.freelancer?.name}</span>
                   </div>
                   

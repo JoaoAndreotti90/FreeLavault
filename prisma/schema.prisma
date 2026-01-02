@@ -59,8 +59,8 @@ model Project {
   price        Decimal  @db.Decimal(10, 2)
   fileUrl      String
   imageUrl     String?
-  freelancerId String
-  freelancer   User     @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
+  freelancerId String?
+  freelancer   User?    @relation(fields: [freelancerId], references: [id], onDelete: SetNull)
   purchases    Purchase[]
   reviews      Review[]
   createdAt    DateTime @default(now())
