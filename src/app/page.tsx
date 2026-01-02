@@ -20,18 +20,22 @@ export default async function Home({
   const { query } = await searchParams
   const searchTerm = query || ""
 
+  // AQUI ESTÁ A MÁGICA
+  // Adicionei a regra: freelancerId { not: null }
+  // O banco só vai entregar projetos que tenham dono.
   const projects = await db.project.findMany({
     where: {
       name: {
         contains: searchTerm,
         mode: "insensitive",
       },
+      freelancerId: {
+        not: null 
+      }
     },
     orderBy: { createdAt: "desc" },
     include: { freelancer: true },
   })
-
-  const activeProjects = projects.filter(project => project.freelancer !== null)
 
   return (
     <main className="min-h-screen bg-gray-50/50">
@@ -60,8 +64,11 @@ export default async function Home({
         </div>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {activeProjects.map((project) => {
+          {projects.map((project) => {
             const isOwner = userId === project.freelancerId
+
+            // Garantia extra: Se por acaso passar um null (não deveria), não quebra
+            if (!project.freelancer) return null
 
             return (
               <div key={project.id} className="group relative flex flex-col overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1">
@@ -95,7 +102,7 @@ export default async function Home({
                   </div>
                   
                   <div className="mt-4 flex items-center gap-2 text-xs font-medium text-gray-400">
-                    <span>Por {project.freelancer?.name}</span>
+                    <span>Por {project.freelancer.name}</span>
                   </div>
                   
                   <div className="mt-6 flex items-center justify-between pt-4 border-t border-gray-50">
@@ -107,12 +114,12 @@ export default async function Home({
                     </div>
                     
                     {isOwner ? (
-                       <Link 
-                         href="/dashboard"
-                         className="flex h-9 items-center justify-center rounded-full bg-gray-100 px-5 text-xs font-bold text-gray-900 hover:bg-gray-200"
-                       >
-                         Gerenciar
-                       </Link>
+                        <Link 
+                          href="/dashboard"
+                          className="flex h-9 items-center justify-center rounded-full bg-gray-100 px-5 text-xs font-bold text-gray-900 hover:bg-gray-200"
+                        >
+                          Gerenciar
+                        </Link>
                     ) : (
                       <form action={buyProject}>
                         <input type="hidden" name="projectId" value={project.id} />
@@ -128,7 +135,7 @@ export default async function Home({
           })}
         </div>
 
-        {activeProjects.length === 0 && (
+        {projects.length === 0 && (
           <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
             <h3 className="text-lg font-medium text-gray-900">Nenhum projeto encontrado</h3>
           </div>
