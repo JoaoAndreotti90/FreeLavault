@@ -26,12 +26,13 @@ export default async function Home({
         contains: searchTerm,
         mode: "insensitive",
       },
+      NOT: {
+        freelancerId: null
+      }
     },
     orderBy: { createdAt: "desc" },
     include: { freelancer: true },
   })
-
-  const activeProjects = projects.filter(p => p.freelancer !== null)
 
   return (
     <main className="min-h-screen bg-gray-50/50">
@@ -60,7 +61,7 @@ export default async function Home({
         </div>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {activeProjects.map((project) => {
+          {projects.map((project) => {
             const isOwner = userId === project.freelancerId
 
             return (
@@ -128,7 +129,7 @@ export default async function Home({
           })}
         </div>
 
-        {activeProjects.length === 0 && (
+        {projects.length === 0 && (
           <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
             <h3 className="text-lg font-medium text-gray-900">Nenhum projeto encontrado</h3>
           </div>
