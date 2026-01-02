@@ -9,8 +9,12 @@ export default function UploadForm() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
     setLoading(true)
+    
+    const formData = new FormData(event.currentTarget)
+
     try {
       const result = await createProject(formData)
       
@@ -22,14 +26,14 @@ export default function UploadForm() {
         router.refresh()
       }
     } catch (error: any) {
-      toast.error(error.message || "Erro de conexão.")
+      toast.error("Erro ao enviar. Tente novamente.")
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <form action={handleSubmit} className="space-y-8 rounded-2xl bg-white p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
+    <form onSubmit={handleSubmit} className="space-y-8 rounded-2xl bg-white p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
       
       <div className="space-y-2">
         <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">Nome do Projeto</label>
@@ -132,7 +136,7 @@ export default function UploadForm() {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <span>Publicando...</span>
+            <span>Enviando...</span>
           </div>
         ) : (
           "Publicar Projeto Agora"
