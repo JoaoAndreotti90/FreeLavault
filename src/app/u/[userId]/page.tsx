@@ -36,7 +36,13 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
             <p className="text-gray-500 text-sm mb-4">{user.email}</p>
             
             {isOwnProfile ? (
-              <form action={updateBio} className="max-w-md">
+              <form 
+                action={async (formData) => {
+                  "use server"
+                  await updateBio(formData)
+                }} 
+                className="max-w-md"
+              >
                 <textarea 
                   name="bio" 
                   defaultValue={user.bio || ""} 
