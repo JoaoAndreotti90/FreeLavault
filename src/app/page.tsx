@@ -20,8 +20,8 @@ export default async function Home({
   const { query } = await searchParams
   const searchTerm = query || ""
 
-  // TRAVA DE SEGURANÇA:
-  // "freelancerId: { not: null }" obriga o banco a trazer apenas projetos com dono.
+  // FILTRO 1: BANCO DE DADOS
+  // Traz apenas projetos que tenham dono (freelancerId não é nulo)
   const projects = await db.project.findMany({
     where: {
       AND: [
@@ -70,10 +70,11 @@ export default async function Home({
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {projects.map((project) => {
-            const isOwner = userId === project.freelancerId
+            // FILTRO 2: JAVASCRIPT (Segurança extra)
+            // Se não tiver freelancer, retorna null (o card não é desenhado na tela)
+            if (!project.freelancer) return null;
 
-            // Verificação dupla: se por milagre o banco falhar, o React não renderiza o card
-            if (!project.freelancer) return null
+            const isOwner = userId === project.freelancerId
 
             return (
               <div key={project.id} className="group relative flex flex-col overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1">
@@ -106,8 +107,9 @@ export default async function Home({
                     </p>
                   </div>
                   
+                  {/* AQUI ESTÁ A MUDANÇA PARA O SEU TESTE */}
                   <div className="mt-4 flex items-center gap-2 text-xs font-medium text-gray-400">
-                    <span>Por {project.freelancer.name}</span>
+                    <span>Vendedor: {project.freelancer.name}</span>
                   </div>
                   
                   <div className="mt-6 flex items-center justify-between pt-4 border-t border-gray-50">
@@ -140,7 +142,8 @@ export default async function Home({
           })}
         </div>
 
-        {projects.length === 0 && (
+        {/* Mensagem se não houver projetos visíveis */}
+        {projects.filter(p => p.freelancer).length === 0 && (
           <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
             <h3 className="text-lg font-medium text-gray-900">Nenhum projeto encontrado</h3>
           </div>
