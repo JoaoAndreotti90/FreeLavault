@@ -20,6 +20,7 @@ export default async function Home({
   const { query } = await searchParams
   const searchTerm = query || ""
 
+  // 1. Buscamos no banco apenas pelo NOME (sem filtro complexo que quebra o build)
   const projects = await db.project.findMany({
     where: {
       name: {
@@ -31,7 +32,9 @@ export default async function Home({
     include: { freelancer: true },
   })
 
-  const activeProjects = projects.filter(project => project.freelancer !== null)
+  // 2. FILTRAGEM MANUAL: Aqui removemos quem não tem freelancer (usuário excluído)
+  // Isso garante que activeProjects só tenha projetos válidos.
+  const activeProjects = projects.filter((project) => project.freelancer !== null)
 
   return (
     <main className="min-h-screen bg-gray-50/50">
@@ -60,6 +63,7 @@ export default async function Home({
         </div>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {/* Usamos activeProjects aqui, não projects */}
           {activeProjects.map((project) => {
             const isOwner = userId === project.freelancerId
 
@@ -95,7 +99,8 @@ export default async function Home({
                   </div>
                   
                   <div className="mt-4 flex items-center gap-2 text-xs font-medium text-gray-400">
-                    <span>Por {project.freelancer?.name}</span>
+                    {/* Aqui usamos o operador ? para evitar erro caso algo passe despercebido */}
+                    <span>Por {project.freelancer?.name || "Vendedor"}</span>
                   </div>
                   
                   <div className="mt-6 flex items-center justify-between pt-4 border-t border-gray-50">
