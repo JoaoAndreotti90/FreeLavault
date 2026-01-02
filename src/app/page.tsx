@@ -17,6 +17,9 @@ export default async function Home({ searchParams }: { searchParams: { query?: s
   const projects = await db.project.findMany({
     where: {
       name: { contains: query, mode: "insensitive" },
+      freelancer: {
+        isNot: null
+      }
     },
     orderBy: { createdAt: "desc" },
     include: { freelancer: true },

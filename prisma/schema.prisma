@@ -76,7 +76,7 @@ model Purchase {
   pricePaid       Decimal        @default(0) @db.Decimal(10, 2)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
-  project         Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project         Project        @relation(fields: [projectId], references: [id], onDelete: NoAction)
   client          User           @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
 
