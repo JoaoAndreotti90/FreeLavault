@@ -1,12 +1,14 @@
-🚀 FreelaVault - Marketplace de Códigos
+# 🚀 FreelaVault - Marketplace de Códigos
+
+<img width="1919" height="941" alt="Screenshot 2026-01-02 115659" src="https://github.com/user-attachments/assets/c9b2f2fd-1fbd-4b3a-9892-7c0112f05b74" />
+
 O FreelaVault é uma plataforma completa para desenvolvedores venderem e comprarem projetos de código-fonte de forma segura. O sistema conta com gestão de arquivos, pagamentos automatizados e avaliações reais.
-<img width="1919" height="941" alt="Screenshot 2026-01-02 115659" src="https://github.com/user-attachments/assets/6e5eee45-3653-44e9-ba48-99ca1a54cb78" />
 
 🔗 Link do Projeto
-https://free-lavault.vercel.app/
+[https://free-lavault.vercel.app/](https://freelavault.vercel.app/)
 
 🛠️ Tecnologias Utilizadas
-Framework: Next.js 15 (App Router)
+Framework: Next.js 
 
 Linguagem: TypeScript
 
@@ -34,7 +36,7 @@ Avaliações Inteligentes: Sistema de reviews que permite comentários apenas pa
 Segurança de Dados: Deleção em cascata (se o vendedor sai, o produto sai da loja, mas o comprador mantém o acesso).
 
 🚀 Como rodar o projeto localmente
-Clone o repositório: git clone https://github.com/seu-usuario/freela-vault.git
+Clone o repositório
 
 Instale as dependências: npm install
 
