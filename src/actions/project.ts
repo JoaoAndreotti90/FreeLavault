@@ -38,10 +38,12 @@ export async function createProject(formData: FormData) {
 
     const imageBlob = await put(`covers/${imageFile.name}`, imageFile, {
       access: "public",
+      addRandomSuffix: true,
     })
 
     const fileBlob = await put(`projects/${mainFile.name}`, mainFile, {
       access: "public",
+      addRandomSuffix: true,
     })
 
     await db.project.create({
@@ -109,6 +111,7 @@ export async function updateProject(formData: FormData) {
       }
       const imageBlob = await put(`covers/${imageFile.name}`, imageFile, {
         access: "public",
+        addRandomSuffix: true,
       })
       imageUrl = imageBlob.url
     }
