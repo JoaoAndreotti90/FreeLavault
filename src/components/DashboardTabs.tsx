@@ -135,7 +135,7 @@ export default function DashboardTabs({
                               {new Date(sale.createdAt).toLocaleDateString("pt-BR", { day: '2-digit', month: 'short', year: 'numeric' })}
                             </td>
                             <td className="px-6 py-4 text-right font-medium text-emerald-600">
-                              +{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(sale.project.price))}
+                              +{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(sale.pricePaid))}
                             </td>
                           </tr>
                         ))}

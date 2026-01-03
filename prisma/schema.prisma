@@ -53,18 +53,18 @@ model Session {
 }
 
 model Project {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   name         String
   description  String
-  price        Decimal  @db.Decimal(10, 2)
+  price        Decimal   @db.Decimal(10, 2)
   fileUrl      String
   imageUrl     String?
   freelancerId String?
-  freelancer   User?    @relation(fields: [freelancerId], references: [id], onDelete: SetNull)
+  freelancer   User?     @relation(fields: [freelancerId], references: [id], onDelete: SetNull)
   purchases    Purchase[]
   reviews      Review[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
 model Purchase {
@@ -76,7 +76,7 @@ model Purchase {
   pricePaid       Decimal        @default(0) @db.Decimal(10, 2)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
-  project         Project        @relation(fields: [projectId], references: [id], onDelete: NoAction)
+  project         Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
   client          User           @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
 
